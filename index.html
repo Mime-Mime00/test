@@ -174,7 +174,8 @@
     position: fixed;
     bottom: -10px;
     border-radius: 50%;
-    background: radial-gradient(circle, #f4d58d 0%, rgba(244,213,141,0) 75%);
+    background: radial-gradient(circle, #fff1cf 0%, #e8a53d 55%, rgba(232,165,61,0) 82%);
+    box-shadow: 0 0 8px 2px rgba(216,140,42,0.6);
     pointer-events: none;
     z-index: 4;
     animation-name: drift;
@@ -182,10 +183,10 @@
     animation-fill-mode: forwards;
   }
   @keyframes drift {
-    0%   { transform: translateY(0) translateX(0); opacity: 0; }
-    12%  { opacity: 0.55; }
-    88%  { opacity: 0.35; }
-    100% { transform: translateY(-108vh) translateX(var(--driftX)); opacity: 0; }
+    0%   { transform: translateY(0) translateX(0) scale(0.7); opacity: 0; }
+    12%  { opacity: 0.9; }
+    88%  { opacity: 0.6; }
+    100% { transform: translateY(-108vh) translateX(var(--driftX)) scale(1); opacity: 0; }
   }
 
   /* ---------- CAJA DE DIÁLOGO ---------- */
@@ -303,6 +304,70 @@
     color: #8a5a34;
     margin: 8px 0 2px;
   }
+
+  /* ---------- CARTA COMPLETA (recuadro final) ---------- */
+  .full-letter {
+    display: none;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.9s ease, opacity 0.7s ease;
+    transition-delay: 0s, 0s;
+  }
+  .lotus-final.bloomed .full-letter {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition-delay: 0.6s, 0.6s;
+  }
+  .full-letter-inner { overflow: hidden; min-height: 0; }
+  .full-letter-card {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--accent-soft);
+  }
+  .full-letter-eyebrow {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+    margin-bottom: 10px;
+  }
+  .full-letter-scroll {
+    max-height: 34vh;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .full-letter-scroll p {
+    font-size: 12.5px;
+    line-height: 1.6;
+    margin: 0 0 9px;
+    text-align: justify;
+  }
+  .full-letter-salutation {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #6b4a2e;
+    margin: 0 0 8px;
+  }
+  .full-letter-quote {
+    font-style: italic;
+    font-size: 12.5px;
+    color: #6b4a2e;
+    border-left: 2px solid var(--accent-soft);
+    padding: 2px 10px;
+    margin: 0 0 9px 4px;
+  }
+  .full-letter-signoff {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #8a5a34;
+    text-align: right;
+    margin: 6px 0 0;
+  }
 </style>
 </head>
 <body>
@@ -386,6 +451,32 @@
       </div>
 
       <div class="signoff-final" id="signoffFinal">Att: Ike</div>
+
+      <div class="full-letter" id="fullLetter">
+        <div class="full-letter-inner">
+          <div class="full-letter-card">
+            <div class="full-letter-eyebrow">La carta, completa</div>
+            <div class="full-letter-scroll">
+              <p class="full-letter-salutation">Querida Sofi:</p>
+              <p>Esta carta no te la escribo como Johan, sino como Ike, ese amigo que siempre estuvo para ti y que, a pesar de todo lo ocurrido, sé que aún sigue estando presente en tu corazón, brindándote ese apoyo que tal vez no puedo darte ahora.</p>
+              <p>Hoy es una fecha muy especial, pues se trata de tu cumpleaños, de tu primavera número 19, y aunque no puedas ver la primavera con tus propios ojos ni caminar por un campo de flores bajo el sol primaveral que solo algunos lugares te brindan, sé que la llevas dentro, la misma que hace florecer todo lo que toca, así como tú, sin darte cuenta, sigues floreciendo. Hoy quiero recordarte todo lo que ha significado este camino tuyo, hoy más que nunca.</p>
+              <p>No necesito que me cuentes cada detalle para saber que estos últimos momentos de tu vida no han sido fáciles; incluso desde la distancia, puedo percibir cómo has enfrentado situaciones difíciles. ¿Y sabes qué conclusión saco de ello? Me alegra el cómo lo has enfrentado, y aunque a lo mejor aún duela un poco, me alegra el cómo lo has hecho: con una fuerza que, aunque yo insistía en recordarte que tenías, terminaste por descubrir tú sola.</p>
+              <p>Recuerdo bien una época en la que te decía:</p>
+              <div class="full-letter-quote">"Tienes que ser fuerte, eres una persona maravillosa, enfrenta tus miedos, no llores más. Eres una mujer con un gran futuro por delante, y sé que en algún momento serás esa chica fuerte y llena de coraje y valentía que sé que habita dentro de ti".</div>
+              <p>No fueron palabras de un día, sino de una conversación que sostuvimos a nuestra manera durante mucho tiempo. Y ahora, viéndote desde la distancia, sé que esa chica por fin está aquí.</p>
+              <p>A pesar del tiempo en el que la distancia y el silencio se apoderaron de nosotros, un alejamiento que realmente no buscamos pero tampoco supimos evitar, algo sí me trae tranquilidad: saber que, incluso en ese silencio y en esa distancia, seguiste creciendo, seguiste adelante, sin necesitarme para hacerlo.</p>
+              <p>Eso no me duele, Sofi; me llena de alegría, pero especialmente me llena de mucho orgullo saber que algo que busqué por mucho tiempo, y traté de inculcarte desde el momento en que nos conocimos, era hacerte abrir los ojos, hacer que te dieras cuenta de que eras alguien más fuerte de lo que tú creías, que a pesar de los problemas, tú sola tenías la fuerza para levantarte de nuevo y seguir adelante a pesar de todo.</p>
+              <p>No te mentiré, Sofi: en el fondo me duele un poco saber que eso que por tanto tiempo busqué para ti, lo lograste encontrar por tu cuenta, y sin necesitar de mí.</p>
+              <p>Aunque en el fondo me duela un poco, no puedo dejar de sentir alegría por ti y por todas las cosas que has conseguido tú sola, y aunque a veces las cosas parecen difíciles o imposibles de conseguir, no te has rendido nunca.</p>
+              <p>Hoy más que nunca puedo decirlo: Sofi, me siento muy orgulloso de ti, de tus metas y tus logros, que por más pequeños que tú los consideres, no dejarán de ser importantes, porque a veces solo necesitamos a alguien que nos recuerde esos pequeños logros del día a día, esas pequeñas metas que logramos conseguir, porque a veces recordarlas nos hace ser conscientes de lo mucho que podemos mejorar y cambiar día tras día.</p>
+              <p>Hoy, mientras poco a poco volvemos a encontrarnos, mientras poco a poco volvemos a conocernos y a redescubrirnos, no quiero pedirte que corramos, ni que recuperemos todo ese tiempo y esa ausencia de golpe.</p>
+              <p>Solo quiero agradecerte por lo que fuimos, por lo que aprendí a tu lado, y por la oportunidad de volver a estar, aunque ya no sea lo mismo. Cierro esta etapa con gratitud, no con nostalgia, sabiendo que lo mejor de nuestra historia quizás todavía no se ha escrito.</p>
+              <p>Feliz cumpleaños, Sofi. Que la vida te siga regalando razones para sonreír, y que sepas que, pase lo que pase, siempre habrá alguien que se alegra profundamente de verte florecer. 🪷</p>
+              <p class="full-letter-signoff">Att: Ike</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="nav-row">
         <button class="nav-btn" id="prevBtn" aria-label="Anterior">‹</button>
@@ -513,7 +604,7 @@
     setInterval(() => {
       const p = document.createElement('div');
       p.className = 'gold-particle';
-      const size = 2 + Math.random() * 3;
+      const size = 4 + Math.random() * 5;
       p.style.width = size + 'px';
       p.style.height = size + 'px';
       p.style.left = Math.random() * 100 + 'vw';
@@ -522,7 +613,7 @@
       p.style.animationDuration = duration + 's';
       document.body.appendChild(p);
       setTimeout(() => p.remove(), duration * 1000 + 300);
-    }, 850);
+    }, 750);
   }
 
   function typeText(text) {
@@ -607,6 +698,7 @@
     render();
     startGoldParticles();
     ensureMusicPlaying();
+    [1200, 2800, 5000].forEach((delay) => setTimeout(ensureMusicPlaying, delay));
   });
 
   nextBtn.addEventListener('click', () => {
