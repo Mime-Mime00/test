@@ -20,12 +20,11 @@
     padding: 0;
     font-family: 'Lora', serif;
     color: var(--ink);
-    overscroll-behavior: none;
+    background: #ece5d8;
   }
   body {
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   /* ---------- GATE (pantalla de bienvenida) ---------- */
@@ -78,6 +77,15 @@
   .gate-btn:active { transform: scale(0.97); }
 
   /* ---------- ESCENARIO ---------- */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .bg-layer.active { opacity: 1; }
+
   .stage {
     position: relative;
     height: 100vh;
@@ -86,15 +94,13 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    background: linear-gradient(165deg, #fdf3e6 0%, #f6dfc0 100%);
-    transition: background 1.1s ease;
     overflow: hidden;
   }
 
   .progress-track {
     position: fixed;
     top: 0; left: 0; right: 0;
-    height: 3px;
+    height: 6px;
     background: rgba(63,58,52,0.12);
     z-index: 60;
   }
@@ -151,18 +157,17 @@
     background-size: 220px 220px;
   }
 
-  /* ---------- VIÑETA (escena de recuerdo) ---------- */
+  /* ---------- VIÑETA ---------- */
   .stage::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 2;
-    background: radial-gradient(ellipse at center, transparent 38%, rgba(25,18,12,0.38) 100%);
-    opacity: 0;
-    transition: opacity 0.9s ease;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(25,18,12,0.9) 100%);
+    opacity: var(--vig, 0.16);
+    transition: opacity 1.2s ease;
   }
-  .stage.vignette::after { opacity: 1; }
 
   /* ---------- PARTÍCULAS DORADAS ---------- */
   .gold-particle {
@@ -318,6 +323,9 @@
 </div>
 <button class="music-toggle" id="musicToggle" title="Silenciar / reproducir música">🔊</button>
 
+<div class="bg-layer" id="bgLayerA"></div>
+<div class="bg-layer" id="bgLayerB"></div>
+
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
 <div class="stage" id="stage">
@@ -395,6 +403,7 @@
     2: 'linear-gradient(165deg, #e8e1d8 0%, #cdbcb0 100%)',
     3: 'linear-gradient(165deg, #fff8ea 0%, #ffe2a6 100%)'
   };
+  const actVig = { 1: 0.14, 2: 0.26, 3: 0.16 };
 
   const scenes = [
     { act: 1, actLabel: 'Capítulo I · Antes de todo',
@@ -407,7 +416,7 @@
     { act: 2, actLabel: 'Capítulo II · El silencio que nos separó',
       text: 'Recuerdo bien una época en la que te decía:' },
     { act: 2, actLabel: 'Capítulo II · El silencio que nos separó', type: 'memory', speaker: 'Recuerdo',
-      bg: 'linear-gradient(165deg, #f1e6d2 0%, #d9c191 100%)',
+      bg: 'linear-gradient(165deg, #f1e6d2 0%, #d9c191 100%)', vig: 0.42,
       text: '"Tienes que ser fuerte, eres una persona maravillosa, enfrenta tus miedos, no llores más. Eres una mujer con un gran futuro por delante, y sé que en algún momento serás esa chica fuerte y llena de coraje y valentía que sé que habita dentro de ti".' },
     { act: 2, actLabel: 'Capítulo II · El silencio que nos separó',
       text: 'No fueron palabras de un día, sino de una conversación que sostuvimos a nuestra manera durante mucho tiempo. Y ahora, viéndote desde la distancia, sé que esa chica por fin está aquí.' },
@@ -416,7 +425,7 @@
     { act: 2, actLabel: 'Capítulo II · El silencio que nos separó',
       text: 'Eso no me duele, Sofi; me llena de alegría, pero especialmente me llena de mucho orgullo saber que algo que busqué por mucho tiempo, y traté de inculcarte desde el momento en que nos conocimos, era hacerte abrir los ojos, hacer que te dieras cuenta de que eras alguien más fuerte de lo que tú creías, que a pesar de los problemas, tú sola tenías la fuerza para levantarte de nuevo y seguir adelante a pesar de todo.' },
     { act: 2, actLabel: 'Capítulo II · El silencio que nos separó', type: 'confession',
-      bg: 'linear-gradient(165deg, #cdbfb2 0%, #a9998c 100%)',
+      bg: 'linear-gradient(165deg, #cdbfb2 0%, #a9998c 100%)', vig: 0.46,
       text: 'No te mentiré, Sofi: en el fondo me duele un poco saber que eso que por tanto tiempo busqué para ti, lo lograste encontrar por tu cuenta, y sin necesitar de mí.' },
 
     { act: 3, actLabel: 'Capítulo III · Lo que sigue',
@@ -428,7 +437,7 @@
     { act: 3, actLabel: 'Capítulo III · Lo que sigue',
       text: 'Solo quiero agradecerte por lo que fuimos, por lo que aprendí a tu lado, y por la oportunidad de volver a estar, aunque ya no sea lo mismo. Cierro esta etapa con gratitud, no con nostalgia, sabiendo que lo mejor de nuestra historia quizás todavía no se ha escrito.' },
     { act: 3, actLabel: 'Capítulo III · Lo que sigue', type: 'final',
-      bg: 'linear-gradient(165deg, #fffaf0 0%, #ffe9b8 100%)',
+      bg: 'linear-gradient(165deg, #fffaf0 0%, #ffe9b8 100%)', vig: 0.10,
       text: 'Feliz cumpleaños, Sofi. Que la vida te siga regalando razones para sonreír, y que sepas que, pase lo que pase, siempre habrá alguien que se alegra profundamente de verte florecer.' }
   ];
 
@@ -538,10 +547,25 @@
     isTyping = false;
   }
 
+  const bgLayerA = document.getElementById('bgLayerA');
+  const bgLayerB = document.getElementById('bgLayerB');
+  let activeLayer = 'A';
+
+  function setSceneBackground(bg) {
+    const nextEl = activeLayer === 'A' ? bgLayerB : bgLayerA;
+    const currentEl = activeLayer === 'A' ? bgLayerA : bgLayerB;
+    nextEl.style.background = bg;
+    requestAnimationFrame(() => {
+      nextEl.classList.add('active');
+      currentEl.classList.remove('active');
+    });
+    activeLayer = activeLayer === 'A' ? 'B' : 'A';
+  }
+
   function render() {
     const s = scenes[current];
-    stage.style.background = s.bg || actBg[s.act];
-    stage.classList.toggle('vignette', s.type === 'memory');
+    setSceneBackground(s.bg || actBg[s.act]);
+    stage.style.setProperty('--vig', s.vig !== undefined ? s.vig : actVig[s.act]);
 
     dialogueText.className = 'dialogue-text' + (s.type === 'memory' ? ' memory' : '');
 
@@ -566,20 +590,27 @@
     typeText(s.text);
   }
 
+  function ensureMusicPlaying() {
+    if (ytReady && ytPlayer && ytPlayer.getPlayerState) {
+      if (ytPlayer.getPlayerState() !== 1) {
+        ytPlayer.playVideo();
+      }
+    } else {
+      pendingPlay = true;
+    }
+  }
+
   openBtn.addEventListener('click', () => {
     gate.style.opacity = '0';
     setTimeout(() => { gate.style.display = 'none'; }, 500);
     musicToggle.style.display = 'flex';
     render();
     startGoldParticles();
-    if (ytReady && ytPlayer && ytPlayer.playVideo) {
-      ytPlayer.playVideo();
-    } else {
-      pendingPlay = true;
-    }
+    ensureMusicPlaying();
   });
 
   nextBtn.addEventListener('click', () => {
+    ensureMusicPlaying();
     if (isTyping) { finishTyping(); return; }
     if (current === scenes.length - 1) {
       current = 0;
@@ -591,6 +622,7 @@
   });
 
   prevBtn.addEventListener('click', () => {
+    ensureMusicPlaying();
     if (current === 0) return;
     current--;
     render();
@@ -605,6 +637,7 @@
 
   const lotusWrap = document.getElementById('lotusWrap');
   lotusWrap.addEventListener('click', () => {
+    ensureMusicPlaying();
     lotusFinal.classList.add('bloomed');
   });
   lotusWrap.addEventListener('keydown', (e) => {
