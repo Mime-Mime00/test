@@ -105,20 +105,6 @@
     transition: width 0.5s ease;
   }
 
-  .act-label {
-    position: fixed;
-    top: max(16px, env(safe-area-inset-top));
-    left: 16px;
-    right: 56px;
-    font-size: 10.5px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    opacity: 0.85;
-    transition: opacity 0.4s ease;
-    z-index: 40;
-  }
-
   .music-toggle {
     position: fixed;
     top: max(10px, env(safe-area-inset-top));
@@ -153,6 +139,50 @@
     100% { transform: translateY(115vh) rotate(220deg); opacity: 0; }
   }
 
+  /* ---------- TEXTURA DE PAPEL ---------- */
+  .paper-texture {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+  }
+
+  /* ---------- VIÑETA (escena de recuerdo) ---------- */
+  .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(ellipse at center, transparent 38%, rgba(25,18,12,0.38) 100%);
+    opacity: 0;
+    transition: opacity 0.9s ease;
+  }
+  .stage.vignette::after { opacity: 1; }
+
+  /* ---------- PARTÍCULAS DORADAS ---------- */
+  .gold-particle {
+    position: fixed;
+    bottom: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f4d58d 0%, rgba(244,213,141,0) 75%);
+    pointer-events: none;
+    z-index: 4;
+    animation-name: drift;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+  }
+  @keyframes drift {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    12%  { opacity: 0.55; }
+    88%  { opacity: 0.35; }
+    100% { transform: translateY(-108vh) translateX(var(--driftX)); opacity: 0; }
+  }
+
   /* ---------- CAJA DE DIÁLOGO ---------- */
   .dialogue-wrap {
     position: relative;
@@ -169,18 +199,6 @@
     border-radius: 16px;
     padding: 18px 18px 12px;
     box-shadow: 0 -8px 30px rgba(60,45,25,0.16);
-  }
-  .speaker-tag {
-    display: inline-block;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 13px;
-    color: #fff;
-    background: var(--accent);
-    padding: 3px 14px;
-    border-radius: 20px;
-    margin-bottom: 10px;
   }
   .dialogue-text {
     font-size: 15px;
@@ -230,19 +248,67 @@
   }
 
   .lotus-final {
+    display: none;
     text-align: center;
-    font-size: 30px;
-    margin: 2px 0 8px;
+    margin: 6px 0 4px;
+  }
+  .lotus-wrap {
+    position: relative;
+    width: 108px;
+    height: 108px;
+    margin: 0 auto;
+    cursor: pointer;
+  }
+  .lotus-glow {
+    position: absolute;
+    inset: -22px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244,197,92,0.55) 0%, rgba(244,197,92,0) 70%);
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+  }
+  .lotus-final.bloomed .lotus-glow { opacity: 1; }
+  .lotus-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.8s ease, transform 0.9s cubic-bezier(.34,1.56,.64,1);
+  }
+  .lotus-svg.bud { opacity: 1; transform: scale(1) rotate(0deg); }
+  .lotus-svg.bloom { opacity: 0; transform: scale(0.55) rotate(-12deg); }
+  .lotus-final.bloomed .lotus-svg.bud { opacity: 0; transform: scale(0.5) rotate(10deg); }
+  .lotus-final.bloomed .lotus-svg.bloom { opacity: 1; transform: scale(1) rotate(0deg); }
+  .lotus-hint {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    opacity: 0.75;
+    margin-top: 4px;
+    transition: opacity 0.5s ease;
+  }
+  .lotus-final.bloomed .lotus-hint { opacity: 0; }
+  .signoff-final {
+    display: none;
+    text-align: right;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: #8a5a34;
+    margin: 8px 0 2px;
   }
 </style>
 </head>
 <body>
 
+<div class="paper-texture"></div>
+
 <div class="gate" id="gate">
   <div class="gate-card">
     <div class="gate-icon">🎧</div>
     <div class="gate-title">Antes de comenzar...</div>
-    <p class="gate-text">Esta carta fue escrita con calma, y me gustaría que la vivieras de la misma forma. Busca un momento tranquilo, ponte los audífonos — hay música de fondo pensada para acompañarte — y avanza a tu propio ritmo con las flechas.</p>
+    <p class="gate-text">Esta carta fue escrita con calma, y me gustaría que la vivieras de la misma forma. Busca un momento tranquilo, ponte los audífonos, hay música de fondo pensada para acompañarte, y avanza a tu propio ritmo con las flechas.</p>
     <button class="gate-btn" id="openBtn">Comenzar</button>
   </div>
 </div>
@@ -253,13 +319,66 @@
 <button class="music-toggle" id="musicToggle" title="Silenciar / reproducir música">🔊</button>
 
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-<div class="act-label" id="actLabel"></div>
 
 <div class="stage" id="stage">
   <div class="dialogue-wrap">
     <div class="dialogue-box">
-      <span class="speaker-tag" id="speakerTag">Ike</span>
       <p class="dialogue-text" id="dialogueText"></p>
+
+      <div class="lotus-final" id="lotusFinal">
+        <div class="lotus-wrap" id="lotusWrap" role="button" tabindex="0" aria-label="Toca para que florezca">
+          <div class="lotus-glow"></div>
+          <svg class="lotus-svg bud" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="budGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#c98aa8"/>
+                <stop offset="100%" stop-color="#f6d9e4"/>
+              </linearGradient>
+            </defs>
+            <path d="M50,86 C32,70 34,32 50,10 C66,32 68,70 50,86 Z" fill="url(#budGrad)" stroke="#b96f8f" stroke-width="0.6"/>
+            <path d="M50,84 C42,66 43,34 50,14" fill="none" stroke="#b96f8f" stroke-width="0.5" opacity="0.5"/>
+            <path d="M50,84 C58,66 57,34 50,14" fill="none" stroke="#b96f8f" stroke-width="0.5" opacity="0.5"/>
+          </svg>
+          <svg class="lotus-svg bloom" viewBox="0 0 100 100">
+            <defs>
+              <path id="lotusPetal" d="M50,50 C40,38 42,18 50,6 C58,18 60,38 50,50 Z"/>
+              <linearGradient id="petalOuter" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#d98fae"/>
+                <stop offset="100%" stop-color="#fdf0f5"/>
+              </linearGradient>
+              <linearGradient id="petalInner" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#e7a8c1"/>
+                <stop offset="100%" stop-color="#fffaf9"/>
+              </linearGradient>
+            </defs>
+            <g>
+              <use href="#lotusPetal" transform="rotate(0 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(45 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(90 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(135 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(180 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(225 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(270 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(315 50 50)" fill="url(#petalOuter)" stroke="#c97a9c" stroke-width="0.5"/>
+            </g>
+            <g transform="translate(50 50) scale(0.55) translate(-50 -50)">
+              <use href="#lotusPetal" transform="rotate(22.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(67.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(112.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(157.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(202.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(247.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(292.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+              <use href="#lotusPetal" transform="rotate(337.5 50 50)" fill="url(#petalInner)" stroke="#d99cb5" stroke-width="0.5"/>
+            </g>
+            <circle cx="50" cy="50" r="7" fill="#f4c15c"/>
+          </svg>
+        </div>
+        <div class="lotus-hint">Toca para que florezca</div>
+      </div>
+
+      <div class="signoff-final" id="signoffFinal">Att: Ike</div>
+
       <div class="nav-row">
         <button class="nav-btn" id="prevBtn" aria-label="Anterior">‹</button>
         <span class="scene-count" id="sceneCount">1 / 14</span>
@@ -310,14 +429,14 @@
       text: 'Solo quiero agradecerte por lo que fuimos, por lo que aprendí a tu lado, y por la oportunidad de volver a estar, aunque ya no sea lo mismo. Cierro esta etapa con gratitud, no con nostalgia, sabiendo que lo mejor de nuestra historia quizás todavía no se ha escrito.' },
     { act: 3, actLabel: 'Capítulo III · Lo que sigue', type: 'final',
       bg: 'linear-gradient(165deg, #fffaf0 0%, #ffe9b8 100%)',
-      text: 'Feliz cumpleaños, Sofi. Que la vida te siga regalando razones para sonreír, y que sepas que, pase lo que pase, siempre habrá alguien que se alegra profundamente de verte florecer.\n\n🪷\n\nAtt: Ike' }
+      text: 'Feliz cumpleaños, Sofi. Que la vida te siga regalando razones para sonreír, y que sepas que, pase lo que pase, siempre habrá alguien que se alegra profundamente de verte florecer.' }
   ];
 
   const gate = document.getElementById('gate');
   const stage = document.getElementById('stage');
-  const actLabelEl = document.getElementById('actLabel');
-  const speakerTag = document.getElementById('speakerTag');
   const dialogueText = document.getElementById('dialogueText');
+  const lotusFinal = document.getElementById('lotusFinal');
+  const signoffFinal = document.getElementById('signoffFinal');
   const progressFill = document.getElementById('progressFill');
   const sceneCount = document.getElementById('sceneCount');
   const prevBtn = document.getElementById('prevBtn');
@@ -360,8 +479,8 @@
   let current = 0;
   let typingId = null;
   let isTyping = false;
-  let lastActLabel = '';
   let petalsSpawned = false;
+  let goldParticlesStarted = false;
 
   function spawnPetals() {
     if (petalsSpawned) return;
@@ -379,6 +498,24 @@
     }
   }
 
+  function startGoldParticles() {
+    if (goldParticlesStarted) return;
+    goldParticlesStarted = true;
+    setInterval(() => {
+      const p = document.createElement('div');
+      p.className = 'gold-particle';
+      const size = 2 + Math.random() * 3;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.setProperty('--driftX', (Math.random() * 40 - 20) + 'px');
+      const duration = 7 + Math.random() * 7;
+      p.style.animationDuration = duration + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), duration * 1000 + 300);
+    }, 850);
+  }
+
   function typeText(text) {
     clearInterval(typingId);
     dialogueText.textContent = '';
@@ -392,7 +529,7 @@
         clearInterval(typingId);
         isTyping = false;
       }
-    }, 20);
+    }, 32);
   }
 
   function finishTyping() {
@@ -404,24 +541,20 @@
   function render() {
     const s = scenes[current];
     stage.style.background = s.bg || actBg[s.act];
+    stage.classList.toggle('vignette', s.type === 'memory');
 
-    if (s.actLabel !== lastActLabel) {
-      actLabelEl.style.opacity = 0;
-      setTimeout(() => {
-        actLabelEl.textContent = s.actLabel;
-        actLabelEl.style.opacity = 0.85;
-      }, 250);
-      lastActLabel = s.actLabel;
-    }
-
-    speakerTag.textContent = s.speaker || 'Ike';
     dialogueText.className = 'dialogue-text' + (s.type === 'memory' ? ' memory' : '');
 
     progressFill.style.width = ((current + 1) / scenes.length * 100) + '%';
     sceneCount.textContent = (current + 1) + ' / ' + scenes.length;
 
     prevBtn.disabled = current === 0;
-    if (current === scenes.length - 1) {
+
+    const isFinal = current === scenes.length - 1;
+    lotusFinal.style.display = isFinal ? 'block' : 'none';
+    signoffFinal.style.display = isFinal ? 'block' : 'none';
+
+    if (isFinal) {
       nextBtn.innerHTML = '↺';
       nextBtn.setAttribute('aria-label', 'Leer de nuevo');
       spawnPetals();
@@ -438,6 +571,7 @@
     setTimeout(() => { gate.style.display = 'none'; }, 500);
     musicToggle.style.display = 'flex';
     render();
+    startGoldParticles();
     if (ytReady && ytPlayer && ytPlayer.playVideo) {
       ytPlayer.playVideo();
     } else {
@@ -466,6 +600,17 @@
     if (gate.style.display === 'none') {
       if (e.key === 'ArrowRight') nextBtn.click();
       if (e.key === 'ArrowLeft') prevBtn.click();
+    }
+  });
+
+  const lotusWrap = document.getElementById('lotusWrap');
+  lotusWrap.addEventListener('click', () => {
+    lotusFinal.classList.add('bloomed');
+  });
+  lotusWrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      lotusFinal.classList.add('bloomed');
     }
   });
 
